@@ -2,7 +2,7 @@
 
 Work Plant is a web app designed to help users stay focused and productive by providing a visual representation of their progress in the form of a virtual plant. As the user sets a timer, the plant grows from a seed to a full-grown plant, motivating the user to complete their tasks within the allotted time.
 
-![Work Plant Screenshot](./workplant.jpeg)
+![Work Plant Screenshot](./workplantscreenshot.jpeg)
 
 ## Features
 

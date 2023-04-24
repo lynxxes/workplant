@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Plant</title>
+<style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+        }
+
+        #plantButton {
+            background-color: white;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #plantButton.stop {
+            background-color: red;
+            color: white;
+        }
+
+        #plantButton:hover {
+            background-color: #ccc;
+        }
+
+        #timer {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        #plantProgress {
+            width: 80%;
+            background-color: white;
+            margin: 20px auto;
+            padding: 5px;
+        }
+
+        #progressBar {
+            background-color: green;
+            height: 25px;
+            width: 0%;
+        }
+
+        #plantImage {
+            width: 200px;
+            height: auto;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Work Plant</h1>
+    <img id="plantImage" src="plant1.png" alt="Plant">
+    <button id="plantButton" onclick="togglePlanting()">Plant a Seed</button>
+    <input type="range" id="timeSlider" min="1" max="8" value="8" oninput="updateSliderLabel()">
+    <label id="timeSliderLabel">8 hours</label>
+    <div id="timer"></div>
+    <div id="plantProgress">
+        <div id="progressBar"></div>
+    </div>
+
+    <script>
+        let plantingInProgress = false;
+        let plantingTime;
+        let plantingStartTime;
+        let plantingInterval;
+        const imagePaths = [
+            'plant1.png',
+            'plant2.png',
+            'plant3.png',
+        ];
+
+        function togglePlanting() {
+            if (plantingInProgress) {
+                stopPlanting();
+            } else {
+                startPlanting();
+            }
+        }
+
+        function startPlanting() {
+            plantingInProgress = true;
+            document.getElementById('plantButton').classList.add('stop');
+            document.getElementById('plantButton').innerText = 'Stop';
+            document.getElementById('timeSlider').style.display = 'none';
+            document.getElementById('timeSliderLabel').style.display = 'none';
+
+            const hours = document.getElementById('timeSlider').value;
+            plantingTime = hours * 60 * 60 * 1000;
+            plantingStartTime = Date.now();
+
+            plantingInterval = setInterval(updatePlantProgress, 1000);
+            updatePlantProgress();
+        }
+
+        function stopPlanting() {
+            plantingInProgress = false;
+            document.getElementById('plantButton').classList.remove('stop');
+            document.getElementById('plantButton').innerText = 'Plant a Seed';
+            document.getElementById('timeSlider').style.display = 'inline-block';
+            document.getElementById('timeSliderLabel').style.display = 'inline-block';
+
+            clearInterval(plantingInterval);
+            document.getElementById("timer").innerText = '';
+            document.getElementById("progressBar").style.width = "0%";
+            document.getElementById("plantImage").src = imagePaths[0];
+            document.title = 'Work Plant';
+        }
+
+        function updatePlantProgress() {
+            const now = Date.now();
+            const elapsedTime = now - plantingStartTime;
+            const remainingTime = plantingTime - elapsedTime;
+
+            if (remainingTime <= 0) {
+                clearInterval(plantingInterval);
+                document.getElementById("timer").innerText = "00:00:00";
+                document.getElementById("progressBar").style.width = "100%";
+                document.getElementById("plantImage").src = imagePaths[imagePaths.length - 1];
+                document.title = 'Work Plant - Done!';
+                return;
+            }
+
+            const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+            const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+            const timeString = `${
